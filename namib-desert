@@ -1,0 +1,55 @@
+Namib Desert
+
+<CsoundSynthesizer>
+<CsOptions>
+-odac
+</CsOptions>
+
+<CsInstruments>
+
+sr      = 48000
+ksmps   = 64
+nchnls  = 2
+0dbfs   = 1
+
+instr 1
+    ; foundation — dry, rarefied noise
+    anoise pinkish 0.12
+
+    ; ultra-slow drifts — like the movement of hot air
+    k1 randi 1, 0.00003
+    k2 randi 1, 0.00002
+    k3 randi 1, 0.000015
+
+    ; filter frequencies — high but soft (mirages)
+    kfreqA port (900 + k1*700), 0.35      ; shimmering air
+    kfreqB port (2500 + k2*3000), 0.35    ; heat haze
+
+    ; soft filters — stable
+    aA moogladder anoise, kfreqA, 0.12
+    aB moogladder anoise, kfreqB, 0.08
+
+    ; medium density — dry heat
+    kdens port (0.22 + k3*0.3), 0.4
+
+    ; summing
+    aout = (aA*0.65 + aB*0.35) * kdens
+
+    ; subtle stereo — trembling horizon
+    aL = aout * (0.96 + randi(0.015, 0.0001))
+    aR = aout * (0.96 + randi(0.015, 0.0001))
+
+    ; level limiting
+    aL = limit(aL, -0.9, 0.9)
+    aR = limit(aR, -0.9, 0.9)
+
+    outs aL, aR
+endin
+
+</CsInstruments>
+
+<CsScore>
+i1 0 999999
+e
+</CsScore>
+</CsoundSynthesizer>
